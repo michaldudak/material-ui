@@ -1,11 +1,30 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+// import { unstable_forwardRef as forwardRef } from '@material-ui/utils';
 import useSwitch, { SwitchState, UseSwitchProps } from './useSwitch';
 import classes from './switchUnstyledClasses';
 import appendStyleProps from '../utils/appendStyleProps';
 
-export interface SwitchUnstyledProps extends UseSwitchProps {
+export interface SwitchUnstyledRootProps {
+  type?: string;
+  className?: string;
+}
+
+export interface SwitchUnstyledThumbProps {
+  className?: string;
+}
+
+export interface SwitchUnstyledInputProps {
+  type?: string;
+  className?: string;
+}
+
+export interface SwitchUnstyledProps<
+  TRoot extends React.ElementType,
+  TThumb extends React.ElementType,
+  TInput extends 'input' | React.ComponentType,
+> extends UseSwitchProps {
   /**
    * Class name applied to the root element.
    */
@@ -15,16 +34,16 @@ export interface SwitchUnstyledProps extends UseSwitchProps {
    * Either a string to use a HTML element or a component.
    * This is equivalent to `components.Root`. If both are provided, the `component` is used.
    */
-  component?: React.ElementType;
+  component?: TRoot;
   /**
    * The components used for each slot inside the Switch.
    * Either a string to use a HTML element or a component.
    * @default {}
    */
   components?: {
-    Root?: React.ElementType;
-    Thumb?: React.ElementType;
-    Input?: React.ElementType;
+    Root?: TRoot;
+    Thumb?: TThumb;
+    Input?: TInput;
   };
 
   /**
@@ -32,9 +51,9 @@ export interface SwitchUnstyledProps extends UseSwitchProps {
    * @default {}
    */
   componentsProps?: {
-    root?: {};
-    thumb?: {};
-    input?: {};
+    root?: React.ComponentPropsWithRef<TRoot>;
+    thumb?: React.ComponentPropsWithRef<TThumb>;
+    input?: React.ComponentPropsWithRef<TInput>;
   };
 }
 
@@ -49,10 +68,11 @@ export interface SwitchUnstyledProps extends UseSwitchProps {
  *
  * - [SwitchUnstyled API](https://material-ui.com/api/switch-unstyled/)
  */
-const SwitchUnstyled = React.forwardRef(function SwitchUnstyled(
-  props: SwitchUnstyledProps,
-  ref: React.ForwardedRef<any>,
-) {
+const SwitchUnstyled = React.forwardRef(function SwitchUnstyled<
+  TRoot extends React.ElementType = 'span',
+  TThumb extends React.ElementType = 'span',
+  TInput extends 'input' | React.ComponentType = 'input',
+>(props: SwitchUnstyledProps<TRoot, TThumb, TInput>, ref: React.ForwardedRef<any>) {
   const {
     checked: checkedProp,
     className,
@@ -92,13 +112,13 @@ const SwitchUnstyled = React.forwardRef(function SwitchUnstyled(
   };
 
   const Root: React.ElementType = component ?? components.Root ?? 'span';
-  const rootProps = appendStyleProps(Root, { ...otherProps, ...componentsProps.root }, styleProps);
+  const rootProps: SwitchUnstyledRootProps = appendStyleProps(Root, { ...otherProps, ...componentsProps.root }, styleProps);
 
   const Thumb: React.ElementType = components.Thumb ?? 'span';
-  const thumbProps = appendStyleProps(Thumb, componentsProps.thumb ?? {}, styleProps);
+  const thumbProps: SwitchUnstyledThumbProps = appendStyleProps(Thumb, componentsProps.thumb ?? {}, styleProps);
 
   const Input: React.ElementType = components.Input ?? 'input';
-  const inputProps = appendStyleProps(Input, componentsProps.input ?? {}, styleProps);
+  const inputProps: SwitchUnstyledInputProps = appendStyleProps(Input, componentsProps.input ?? {}, styleProps);
 
   const stateClasses = {
     [classes.checked]: checked,
@@ -113,11 +133,8 @@ const SwitchUnstyled = React.forwardRef(function SwitchUnstyled(
       {...rootProps}
       className={clsx(classes.root, stateClasses, className, rootProps?.className)}
     >
-      <Thumb {...thumbProps} className={clsx(classes.thumb, thumbProps?.className)} />
-      <Input
-        {...getInputProps(inputProps)}
-        className={clsx(classes.input, inputProps?.className)}
-      />
+      <Thumb {...thumbProps} className={clsx(classes.thumb, thumbProps.className)} />
+      <Input {...getInputProps(inputProps)} className={clsx(classes.input, inputProps.className)} />
     </Root>
   );
 });
@@ -140,16 +157,16 @@ SwitchUnstyled.propTypes /* remove-proptypes */ = {
    * Either a string to use a HTML element or a component.
    * This is equivalent to `components.Root`. If both are provided, the `component` is used.
    */
-  component: PropTypes.elementType,
+  component: PropTypes /* @typescript-to-proptypes-ignore */.elementType,
   /**
    * The components used for each slot inside the Switch.
    * Either a string to use a HTML element or a component.
    * @default {}
    */
   components: PropTypes.shape({
-    Input: PropTypes.elementType,
-    Root: PropTypes.elementType,
-    Thumb: PropTypes.elementType,
+    Input: PropTypes.oneOfType([PropTypes.oneOf(['input']), PropTypes.func]),
+    Root: PropTypes /* @typescript-to-proptypes-ignore */.elementType,
+    Thumb: PropTypes /* @typescript-to-proptypes-ignore */.elementType,
   }),
   /**
    * The props used for each slot inside the Switch.
