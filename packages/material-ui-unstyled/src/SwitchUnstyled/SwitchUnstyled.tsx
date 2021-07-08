@@ -163,10 +163,10 @@ SwitchUnstyled.propTypes /* remove-proptypes */ = {
    * Either a string to use a HTML element or a component.
    * @default {}
    */
-  components: PropTypes.shape({
+   components: PropTypes /* @typescript-to-proptypes-ignore */.shape({
     Input: PropTypes.oneOfType([PropTypes.oneOf(['input']), PropTypes.func]),
-    Root: PropTypes /* @typescript-to-proptypes-ignore */.elementType,
-    Thumb: PropTypes /* @typescript-to-proptypes-ignore */.elementType,
+    Root: PropTypes.elementType,
+    Thumb: PropTypes.elementType,
   }),
   /**
    * The props used for each slot inside the Switch.
