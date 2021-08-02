@@ -4,7 +4,7 @@ import { expectType } from '@material-ui/types';
 
 const CustomComponent: React.FC<{ stringProp: string; numberProp: number }> = () => <div />;
 
-const FormControlUnstyledTest = () => (
+const SwitchUnstyledTest = () => (
   <div>
     <SwitchUnstyled defaultChecked />
     {/* @ts-expect-error */}
