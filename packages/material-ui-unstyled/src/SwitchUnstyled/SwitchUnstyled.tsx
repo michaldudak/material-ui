@@ -112,13 +112,25 @@ const SwitchUnstyled = React.forwardRef(function SwitchUnstyled<
   };
 
   const Root: React.ElementType = component ?? components.Root ?? 'span';
-  const rootProps: SwitchUnstyledRootProps = appendStyleProps(Root, { ...otherProps, ...componentsProps.root }, styleProps);
+  const rootProps: SwitchUnstyledRootProps = appendStyleProps(
+    Root,
+    { ...otherProps, ...componentsProps.root },
+    styleProps,
+  );
 
   const Thumb: React.ElementType = components.Thumb ?? 'span';
-  const thumbProps: SwitchUnstyledThumbProps = appendStyleProps(Thumb, componentsProps.thumb ?? {}, styleProps);
+  const thumbProps: SwitchUnstyledThumbProps = appendStyleProps(
+    Thumb,
+    componentsProps.thumb ?? {},
+    styleProps,
+  );
 
   const Input: React.ElementType = components.Input ?? 'input';
-  const inputProps: SwitchUnstyledInputProps = appendStyleProps(Input, componentsProps.input ?? {}, styleProps);
+  const inputProps: SwitchUnstyledInputProps = appendStyleProps(
+    Input,
+    componentsProps.input ?? {},
+    styleProps,
+  );
 
   const stateClasses = {
     [classes.checked]: checked,
@@ -163,7 +175,7 @@ SwitchUnstyled.propTypes /* remove-proptypes */ = {
    * Either a string to use a HTML element or a component.
    * @default {}
    */
-   components: PropTypes /* @typescript-to-proptypes-ignore */.shape({
+  components: PropTypes /* @typescript-to-proptypes-ignore */.shape({
     Input: PropTypes.oneOfType([PropTypes.oneOf(['input']), PropTypes.func]),
     Root: PropTypes.elementType,
     Thumb: PropTypes.elementType,
@@ -211,4 +223,11 @@ SwitchUnstyled.propTypes /* remove-proptypes */ = {
   required: PropTypes.bool,
 } as any;
 
-export default SwitchUnstyled;
+export default SwitchUnstyled as <
+  TRoot extends React.ElementType<any> = 'span',
+  TThumb extends React.ElementType<any> = 'span',
+  TInput extends 'input' | React.ComponentType<{}> = 'input',
+>(
+  props: SwitchUnstyledProps<TRoot, TThumb, TInput>,
+  ref: React.ForwardedRef<any>,
+) => JSX.Element;
