@@ -23,7 +23,10 @@ module.exports = {
       '@mui/utils': path.resolve(__dirname, './packages/mui-utils/src'),
       '@mui/material-next': path.resolve(__dirname, './packages/mui-material-next/src'),
       '@mui/joy': path.resolve(__dirname, './packages/mui-joy/src'),
-      'typescript-to-proptypes': path.resolve(__dirname, './packages/typescript-to-proptypes/src'),
+      '@mui-internal/typescript-to-proptypes': path.resolve(
+        __dirname,
+        './packages/typescript-to-proptypes/src',
+      ),
       docs: path.resolve(__dirname, './docs'),
     },
     extensions: ['.js', '.ts', '.tsx', '.d.ts'],

@@ -1,8 +1,8 @@
 {
-  "name": "typescript-to-proptypes",
-  "version": "5.0.0",
+  "name": "@mui-internal/typescript-to-proptypes",
+  "version": "1.0.0",
   "private": true,
-  "description": "Generate proptypes from TypeScript declarations",
+  "description": "Generate proptypes from TypeScript declarations. This is a fork of the typescript-to-proptypes package.",
   "repository": {
     "type": "git",
     "url": "https://github.com/mui/material-ui.git",

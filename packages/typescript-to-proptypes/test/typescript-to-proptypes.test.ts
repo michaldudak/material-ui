@@ -29,7 +29,7 @@ const testCases = glob
     };
   });
 
-describe('typescript-to-proptypes', () => {
+describe('@mui-internal/typescript-to-proptypes', () => {
   let cachedProject: TypeScriptProject;
   function getProject() {
     return cachedProject;
