@@ -1,5 +1,5 @@
+import { CreateTypeScriptProjectOptions } from '@mui-internal/docs-utilities/createTypeScriptProject';
 import { ComponentInfo, HookInfo } from './buildApiUtils';
-import { CreateTypeScriptProjectOptions } from './utils/createTypeScriptProject';
 import { ReactApi as ComponentReactApi } from './ApiBuilders/ComponentApiBuilder';
 import { ReactApi as HookReactApi } from './ApiBuilders/HookApiBuilder';
 

@@ -2,6 +2,11 @@ import { mkdirSync } from 'fs';
 import path from 'path';
 import * as fse from 'fs-extra';
 import kebabCase from 'lodash/kebabCase';
+import {
+  CreateTypeScriptProjectOptions,
+  TypeScriptProjectBuilder,
+  createTypeScriptProjectBuilder,
+} from '@mui-internal/docs-utilities/createTypeScriptProject';
 import findComponents from './utils/findComponents';
 import findHooks from './utils/findHooks';
 import { writePrettifiedFile } from './buildApiUtils';
@@ -9,11 +14,6 @@ import generateComponentApi, {
   ReactApi as ComponentReactApi,
 } from './ApiBuilders/ComponentApiBuilder';
 import generateHookApi from './ApiBuilders/HookApiBuilder';
-import {
-  CreateTypeScriptProjectOptions,
-  TypeScriptProjectBuilder,
-  createTypeScriptProjectBuilder,
-} from './utils/createTypeScriptProject';
 import { ProjectSettings } from './ProjectSettings';
 
 const apiDocsTranslationsDirectory = path.resolve('docs', 'translations', 'api-docs');

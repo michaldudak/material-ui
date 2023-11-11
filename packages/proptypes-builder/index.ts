@@ -4,24 +4,22 @@ import * as fse from 'fs-extra';
 import * as prettier from 'prettier';
 import glob from 'fast-glob';
 import * as _ from 'lodash';
-import * as yargs from 'yargs';
 import * as ts from 'typescript';
 import {
+  CreateTypeScriptProjectOptions,
   fixBabelGeneratorIssues,
   fixLineEndings,
   getUnstyledFilename,
+  createTypeScriptProjectBuilder,
+  TypeScriptProject,
 } from '@mui-internal/docs-utilities';
 import {
   getPropTypesFromFile,
   injectPropTypesInFile,
   InjectPropTypesInFileOptions,
 } from '@mui-internal/typescript-to-proptypes';
-import {
-  createTypeScriptProjectBuilder,
-  TypeScriptProject,
-} from '@mui-internal/api-docs-builder/utils/createTypeScriptProject';
 
-import CORE_TYPESCRIPT_PROJECTS from './coreTypeScriptProjects';
+import { ProjectSettings } from './ProjectSettings';
 
 const useExternalPropsFromInputBase = [
   'autoComplete',
@@ -163,10 +161,10 @@ const getSortLiteralUnions: InjectPropTypesInFileOptions['getSortLiteralUnions']
 };
 
 const prettierConfig = prettier.resolveConfig.sync(process.cwd(), {
-  config: path.join(__dirname, '../prettier.config.js'),
+  config: path.join(__dirname, '../../prettier.config.js'),
 });
 
-async function generateProptypes(
+async function generatePropTypesForFile(
   project: TypeScriptProject,
   sourceFile: string,
   tsFile: string,
@@ -313,30 +311,29 @@ async function generateProptypes(
   await fse.writeFile(sourceFile, correctedLineEndings);
 }
 
-interface HandlerArgv {
-  pattern: string;
-}
-async function run(argv: HandlerArgv) {
-  const { pattern } = argv;
-
-  const filePattern = new RegExp(pattern);
-  if (pattern.length > 0) {
-    console.log(`Only considering declaration files matching ${filePattern}`);
+export async function generatePropTypes(
+  projectsSettings: ProjectSettings[],
+  pattern: RegExp | null = null,
+) {
+  if (pattern != null) {
+    console.log(`Only considering declaration files matching ${pattern.source}`);
   }
 
-  const buildProject = createTypeScriptProjectBuilder(CORE_TYPESCRIPT_PROJECTS);
+  const allTypeScriptProjects = projectsSettings
+    .flatMap((setting) => setting.typeScriptProjects)
+    .reduce((acc, project) => {
+      acc[project.name] = project;
+      return acc;
+    }, {} as Record<string, CreateTypeScriptProjectOptions>);
+
+  const buildTypeScriptProject = createTypeScriptProjectBuilder(allTypeScriptProjects);
+
+  const allSourcePaths = projectsSettings.map((setting) => setting.rootPath);
 
   // Matches files where the folder and file both start with uppercase letters
   // Example: AppBar/AppBar.d.ts
   const allFiles = await Promise.all(
-    [
-      path.resolve(__dirname, '../packages/mui-system/src'),
-      path.resolve(__dirname, '../packages/mui-base/src'),
-      path.resolve(__dirname, '../packages/mui-material/src'),
-      path.resolve(__dirname, '../packages/mui-lab/src'),
-      path.resolve(__dirname, '../packages/mui-material-next/src'),
-      path.resolve(__dirname, '../packages/mui-joy/src'),
-    ].map((folderPath) =>
+    allSourcePaths.map((folderPath) =>
       glob('+([A-Z])*/+([A-Z])*.*@(d.ts|ts|tsx)', {
         absolute: true,
         cwd: folderPath,
@@ -359,16 +356,14 @@ async function run(argv: HandlerArgv) {
 
       return fileName === folderName;
     })
-    .filter((filePath) => filePattern.test(filePath));
+    .filter((filePath) => pattern?.test(filePath) ?? true);
 
   const promises = files.map<Promise<void>>(async (tsFile) => {
     const sourceFile = tsFile.includes('.d.ts') ? tsFile.replace('.d.ts', '.js') : tsFile;
     try {
-      const projectName = tsFile.match(
-        /packages\/mui-([a-zA-Z-]+)\/src/,
-      )![1] as CoreTypeScriptProjects;
-      const project = buildProject(projectName);
-      await generateProptypes(project, sourceFile, tsFile);
+      const projectName = tsFile.match(/packages\/mui-([a-zA-Z-]+)\/src/)![1];
+      const project = buildTypeScriptProject(projectName);
+      await generatePropTypesForFile(project, sourceFile, tsFile);
     } catch (error: any) {
       error.message = `${tsFile}: ${error.message}`;
       throw error;
@@ -388,21 +383,3 @@ async function run(argv: HandlerArgv) {
     process.exit(1);
   }
 }
-
-yargs
-  .command<HandlerArgv>({
-    command: '$0',
-    describe: 'Generates Component.propTypes from TypeScript declarations',
-    builder: (command) => {
-      return command.option('pattern', {
-        default: '',
-        describe: 'Only considers declaration files matching this pattern.',
-        type: 'string',
-      });
-    },
-    handler: run,
-  })
-  .help()
-  .strict(true)
-  .version(false)
-  .parse();

@@ -5,7 +5,7 @@ import * as prettier from 'prettier';
 import kebabCase from 'lodash/kebabCase';
 import { getLineFeed } from '@mui-internal/docs-utilities';
 import { replaceComponentLinks } from './utils/replaceUrl';
-import { TypeScriptProject } from './utils/createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 
 /**
  * TODO: this should really be fixed in findPagesMarkdown().

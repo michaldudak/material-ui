@@ -1,5 +1,7 @@
 import { EOL } from 'os';
 
+export * from './createTypeScriptProject';
+
 export function getLineFeed(source: string): string {
   const match = source.match(/\r?\n/);
   return match === null ? EOL : match[0];

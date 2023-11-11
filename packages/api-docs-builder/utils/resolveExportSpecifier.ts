@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { TypeScriptProject } from './createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 
 function shouldAliasSymbol(symbol: ts.Symbol) {
   const declaration = symbol.declarations?.[0];

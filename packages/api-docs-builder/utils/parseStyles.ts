@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { getSymbolDescription } from '../buildApiUtils';
-import { TypeScriptProject } from './createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 import { getPropsFromComponentNode } from './getPropsFromComponentNode';
 import resolveExportSpecifier from './resolveExportSpecifier';
 

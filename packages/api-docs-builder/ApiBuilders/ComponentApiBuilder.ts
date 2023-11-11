@@ -21,7 +21,7 @@ import createDescribeableProp, {
 } from '../utils/createDescribeableProp';
 import generatePropDescription from '../utils/generatePropDescription';
 import parseStyles, { Classes, Styles } from '../utils/parseStyles';
-import { TypeScriptProject } from '../utils/createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 import parseSlotsAndClasses, { Slot } from '../utils/parseSlotsAndClasses';
 
 export type AdditionalPropsInfo = {

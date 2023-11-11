@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { getSymbolDescription, getSymbolJSDocTags } from '../buildApiUtils';
-import { TypeScriptProject } from './createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 import { Classes } from './parseStyles';
 
 // If GLOBAL_STATE_CLASSES is changed, GlobalStateSlot in

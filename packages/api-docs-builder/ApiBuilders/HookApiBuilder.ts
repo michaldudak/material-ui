@@ -18,7 +18,7 @@ import {
   stringifySymbol,
   writePrettifiedFile,
 } from '../buildApiUtils';
-import { TypeScriptProject } from '../utils/createTypeScriptProject';
+import { TypeScriptProject } from '@mui-internal/docs-utilities/createTypeScriptProject';
 
 interface ParsedProperty {
   name: string;
