@@ -4,7 +4,6 @@ import * as fse from 'fs-extra';
 import * as prettier from 'prettier';
 import glob from 'fast-glob';
 import * as _ from 'lodash';
-import * as ts from 'typescript';
 import {
   CreateTypeScriptProjectOptions,
   fixBabelGeneratorIssues,
@@ -17,6 +16,7 @@ import {
   getPropTypesFromFile,
   injectPropTypesInFile,
   InjectPropTypesInFileOptions,
+  LiteralType,
 } from '@mui-internal/typescript-to-proptypes';
 import { ProjectSettings } from './ProjectSettings';
 
@@ -64,14 +64,14 @@ export async function generatePropTypes(
   }
 }
 
-function sortBreakpointsLiteralByViewportAscending(a: ts.LiteralType, b: ts.LiteralType) {
+function sortBreakpointsLiteralByViewportAscending(a: LiteralType, b: LiteralType) {
   // default breakpoints ordered by their size ascending
   const breakpointOrder: readonly unknown[] = ['"xs"', '"sm"', '"md"', '"lg"', '"xl"'];
 
   return breakpointOrder.indexOf(a.value) - breakpointOrder.indexOf(b.value);
 }
 
-function sortSizeByScaleAscending(a: ts.LiteralType, b: ts.LiteralType) {
+function sortSizeByScaleAscending(a: LiteralType, b: LiteralType) {
   const sizeOrder: readonly unknown[] = ['"small"', '"medium"', '"large"'];
   return sizeOrder.indexOf(a.value) - sizeOrder.indexOf(b.value);
 }
