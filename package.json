@@ -3,7 +3,7 @@
   "version": "5.14.17",
   "private": true,
   "scripts": {
-    "proptypes": "cross-env BABEL_ENV=development babel-node --extensions \".tsx,.ts,.js\" ./packages/proptypes-builder/cli.ts",
+    "proptypes": "cross-env BABEL_ENV=development babel-node --extensions \".tsx,.ts,.js\" ./scripts/generateProptypes.ts",
     "deduplicate": "node scripts/deduplicate.mjs",
     "benchmark:browser": "yarn workspace benchmark browser",
     "build": "lerna run --parallel --scope \"@mui/*\" build",
