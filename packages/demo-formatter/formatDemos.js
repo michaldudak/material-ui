@@ -5,26 +5,22 @@
  * would indicate equivalence.
  */
 
+import path from 'node:path';
+import fse from 'fs-extra';
+import babel from '@babel/core';
+import prettier from 'prettier';
+import { getPropTypesFromFile, injectPropTypesInFile } from '@mui-internal/typescript-to-proptypes';
+import {
+  createTypeScriptProjectBuilder,
+  fixBabelGeneratorIssues,
+  fixLineEndings,
+} from '@mui-internal/docs-utilities';
+
 /**
  * List of demos or folders to ignore when transpiling.
  * Only ignore files that aren't used in the UI.
  */
 const ignoreList = ['/pages.ts', 'docs/data/joy/getting-started/templates'];
-
-const path = require('path');
-const fse = require('fs-extra');
-const babel = require('@babel/core');
-const prettier = require('prettier');
-const {
-  getPropTypesFromFile,
-  injectPropTypesInFile,
-} = require('@mui-internal/typescript-to-proptypes');
-const {
-  createTypeScriptProjectBuilder,
-} = require('@mui-internal/api-docs-builder/utils/createTypeScriptProject');
-const yargs = require('yargs');
-const { fixBabelGeneratorIssues, fixLineEndings } = require('@mui-internal/docs-utilities');
-const { default: CORE_TYPESCRIPT_PROJECTS } = require('../../scripts/coreTypeScriptProjects');
 
 const babelConfig = {
   presets: ['@babel/preset-typescript'],
@@ -135,18 +131,12 @@ async function transpileFile(tsxPath, project) {
   }
 }
 
-async function main(argv) {
-  const { watch: watchMode, disableCache, pattern } = argv;
-
-  // TODO: Remove at some point.
-  // Though not too soon so that it isn't disruptive.
-  // It's a no-op anyway.
-  if (disableCache !== undefined) {
-    console.warn(
-      '--disable-cache does not have any effect since it is the default. In the future passing this flag will throw.',
-    );
-  }
-
+/**
+ * Transpiles TypeScript demos to formatted JavaScript.
+ * Can be used to verify that JS and TS demos are equivalent. No introduced change
+ * would indicate equivalence.
+ */
+export async function formatDemos(projectSettings, watchMode, pattern) {
   const filePattern = new RegExp(pattern);
   if (pattern.length > 0) {
     console.log(`Only considering demos matching ${filePattern}`);
@@ -157,7 +147,7 @@ async function main(argv) {
     ...(await getFiles(path.join(workspaceRoot, 'docs/data'))), // new structure
   ].filter((fileName) => filePattern.test(fileName));
 
-  const buildProject = createTypeScriptProjectBuilder(CORE_TYPESCRIPT_PROJECTS);
+  const buildProject = createTypeScriptProjectBuilder([projectSettings.typeScriptProject]);
   const project = buildProject('docs', { files: tsxFiles });
 
   let successful = 0;
@@ -211,32 +201,3 @@ async function main(argv) {
 
   console.log('\nWatching for file changes...');
 }
-
-yargs
-  .command({
-    command: '$0',
-    description: 'transpile TypeScript demos',
-    builder: (command) => {
-      return command
-        .option('watch', {
-          default: false,
-          description: 'transpiles demos as soon as they changed',
-          type: 'boolean',
-        })
-        .option('disable-cache', {
-          description: 'No longer supported. The cache is disabled by default.',
-          type: 'boolean',
-        })
-        .option('pattern', {
-          default: '',
-          description:
-            'Transpiles only the TypeScript demos whose filename matches the given pattern.',
-          type: 'string',
-        });
-    },
-    handler: main,
-  })
-  .help()
-  .strict(true)
-  .version(false)
-  .parse();

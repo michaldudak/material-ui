@@ -30,7 +30,7 @@
     "docs:link-check": "yarn workspace docs link-check",
     "docs:typescript": "yarn docs:typescript:formatted --watch",
     "docs:typescript:check": "yarn workspace docs typescript",
-    "docs:typescript:formatted": "cross-env BABEL_ENV=development babel-node --extensions \".tsx,.ts,.js\" ./docs/scripts/formattedTSDemos",
+    "docs:typescript:formatted": "ts-node --esm ./docs/scripts/formattedTSDemos.mjs",
     "docs:mdicons:synonyms": "cross-env BABEL_ENV=development babel-node --extensions \".tsx,.ts,.js,.mjs\" ./docs/scripts/updateIconSynonyms && yarn prettier",
     "extract-error-codes": "cross-env MUI_EXTRACT_ERROR_CODES=true lerna run --concurrency 8 build:modern",
     "rsc:build": "ts-node ./packages/rsc-builder/buildRsc.ts",

@@ -1,0 +1,17 @@
+{
+  "name": "@mui-internal/demo-formatter",
+  "version": "1.0.0",
+  "private": "true",
+  "type": "module",
+  "main": "./formatDemos.js",
+  "scripts": {},
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/preset-typescript": "^7.23.2",
+    "@mui-internal/docs-utilities": "1.0.0",
+    "@mui-internal/typescript-to-proptypes": "1.0.0",
+    "fs-extra": "^11.1.1",
+    "prettier": "^2.8.8"
+  },
+  "devDependencies": {}
+}
