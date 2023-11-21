@@ -29,7 +29,6 @@ describe('<NumberInput />', () => {
     mount,
     refInstanceof: window.HTMLDivElement,
     testComponentPropWith: 'div',
-    muiName: 'MuiNumberInput',
     slots: {
       root: {
         expectedClassName: numberInputClasses.root,
