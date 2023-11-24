@@ -1,1 +1,9 @@
-<CustomSelect placeholder="Select a color…" options={options} />
+<Select placeholder="Select a color…">
+  {options.map((option) => {
+    return (
+      <Option key={option.value} value={option.value} disabled={option.disabled}>
+        {option.label}
+      </Option>
+    );
+  })}
+</Select>

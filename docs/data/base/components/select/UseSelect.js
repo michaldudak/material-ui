@@ -7,7 +7,17 @@ import { styled } from '@mui/system';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 
 export default function UseSelect() {
-  return <CustomSelect placeholder="Select a color…" options={options} />;
+  return (
+    <Select placeholder="Select a color…">
+      {options.map((option) => {
+        return (
+          <Option key={option.value} value={option.value} disabled={option.disabled}>
+            {option.label}
+          </Option>
+        );
+      })}
+    </Select>
+  );
 }
 
 const blue = {
@@ -36,7 +46,7 @@ const Root = styled('div')`
   position: relative;
 `;
 
-const Toggle = styled('button')(
+const StyledToggle = styled('button')(
   ({ theme }) => `
   font-family: IBM Plex Sans, sans-serif;
   font-size: 0.875rem;
@@ -78,7 +88,7 @@ const Toggle = styled('button')(
   `,
 );
 
-const Listbox = styled('ul')(
+const StyledListbox = styled('ul')(
   ({ theme }) => `
   font-family: IBM Plex Sans, sans-serif;
   font-size: 0.875rem;
@@ -113,7 +123,7 @@ const Listbox = styled('ul')(
   `,
 );
 
-const Option = styled('li')(
+const StyledOption = styled('li')(
   ({ theme }) => `
   padding: 8px;
   border-radius: 0.45em;
@@ -147,13 +157,11 @@ const Option = styled('li')(
   `,
 );
 
-function renderSelectedValue(value, options) {
-  const selectedOption = options.find((option) => option.value === value);
-
-  return selectedOption ? `${selectedOption.label} (${value})` : null;
+function renderSelectedValue(option) {
+  return option ? `${option.label} (${option.value})` : null;
 }
 
-function CustomOption(props) {
+function Option(props) {
   const { children, value, className, disabled = false } = props;
   const { getRootProps, highlighted } = useOption({
     value,
@@ -162,32 +170,33 @@ function CustomOption(props) {
   });
 
   return (
-    <Option
+    <StyledOption
       {...getRootProps()}
-      className={clsx({ highlighted }, className)}
+      className={clsx({ highlighted, disabled }, className)}
       style={{ '--color': value }}
     >
       {children}
-    </Option>
+    </StyledOption>
   );
 }
 
-CustomOption.propTypes = {
+Option.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   disabled: PropTypes.bool,
   value: PropTypes.string.isRequired,
 };
 
-function CustomSelect({ options, placeholder }) {
+function Select({ children, placeholder }) {
   const listboxRef = React.useRef(null);
   const [listboxVisible, setListboxVisible] = React.useState(false);
 
-  const { getButtonProps, getListboxProps, contextValue, value } = useSelect({
-    listboxRef,
-    onOpenChange: setListboxVisible,
-    open: listboxVisible,
-  });
+  const { getButtonProps, getListboxProps, getOptionMetadata, contextValue, value } =
+    useSelect({
+      listboxRef,
+      onOpenChange: setListboxVisible,
+      open: listboxVisible,
+    });
 
   React.useEffect(() => {
     if (listboxVisible) {
@@ -195,42 +204,30 @@ function CustomSelect({ options, placeholder }) {
     }
   }, [listboxVisible]);
 
+  const selectedOption = value != null ? getOptionMetadata(value) : undefined;
+
   return (
     <Root>
-      <Toggle {...getButtonProps()} style={{ '--color': value }}>
-        {renderSelectedValue(value, options) || (
+      <StyledToggle {...getButtonProps()} style={{ '--color': value }}>
+        {renderSelectedValue(selectedOption) || (
           <span className="placeholder">{placeholder ?? ' '}</span>
         )}
 
         <UnfoldMoreRoundedIcon />
-      </Toggle>
-      <Listbox
+      </StyledToggle>
+      <StyledListbox
         {...getListboxProps()}
         aria-hidden={!listboxVisible}
         className={listboxVisible ? '' : 'hidden'}
       >
-        <SelectProvider value={contextValue}>
-          {options.map((option) => {
-            return (
-              <CustomOption key={option.value} value={option.value}>
-                {option.label}
-              </CustomOption>
-            );
-          })}
-        </SelectProvider>
-      </Listbox>
+        <SelectProvider value={contextValue}>{children}</SelectProvider>
+      </StyledListbox>
     </Root>
   );
 }
 
-CustomSelect.propTypes = {
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      disabled: PropTypes.bool,
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+Select.propTypes = {
+  children: PropTypes.node,
   placeholder: PropTypes.string,
 };
 
@@ -246,5 +243,18 @@ const options = [
   {
     label: 'Blue',
     value: '#2196F3',
+  },
+  {
+    label: 'Yellow',
+    value: '#FFEB3B',
+    disabled: true,
+  },
+  {
+    label: 'Purple',
+    value: '#9C27B0',
+  },
+  {
+    label: 'Grey',
+    value: '#9E9E9E',
   },
 ];
